@@ -1,0 +1,25 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Style
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_locals: false
+    use_super_parameters: true
+    
+    # Safety
+    avoid_print: true
+    always_declare_return_types: true
+    avoid_empty_else: true
+    
+    # Disabled (too noisy for rapid development)
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+
+analyzer:
+  exclude:
+    - '**/*.g.dart'          # Isar / json_serializable generated
+    - '**/*.freezed.dart'    # Freezed generated
+  errors:
+    invalid_annotation_target: ignore
