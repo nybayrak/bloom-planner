@@ -60,7 +60,7 @@ dependencies:
   emoji_picker_flutter: ^2.2.0
 
   # ── Monetisation ─────────────────────────────────────────────
-  purchases_flutter: ^7.4.0  # RevenueCat
+
 
   # ── Home widgets ─────────────────────────────────────────────
   home_widget: ^0.5.0
