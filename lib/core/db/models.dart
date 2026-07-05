@@ -1,455 +1,99 @@
-// lib/core/db/models.dart
-//
-// All Isar collection models for Bloom Planner.
-// Run:  flutter pub run build_runner build --delete-conflicting-outputs
-// to generate the *.g.dart files.
-//
-// ignore_for_file: non_constant_identifier_names
-
-import 'package:isar/isar.dart';
-
-part 'models.g.dart';
-
-// ─────────────────────────────────────────────────────────────
-// USER PROFILE
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class UserProfile {
-  Id id = Isar.autoIncrement;
-
-  @Index(unique: true)
-  late String uid; // Firebase UID
-
-  late String displayName;
-  String? avatarUrl;
-  String? localAvatarPath;
-  late String email;
-
-  // Preferences
-  @Enumerated(EnumType.name)
-  late ThemePreference themePreference;
-
-  @Enumerated(EnumType.name)
-  late SeasonPreference seasonPreference;
-
-  bool adhdMode = false;
-  bool familyMode = false;
-  bool onboardingComplete = false;
-
-  // Subscription
-  @Enumerated(EnumType.name)
-  late SubscriptionTier subscriptionTier;
-
-  DateTime? subscriptionExpiresAt;
-
-  late DateTime createdAt;
-  late DateTime updatedAt;
-}
-
-enum ThemePreference { system, light, dark }
-enum SeasonPreference { auto, spring, summer, autumn, winter }
-enum SubscriptionTier { free, pro, family, school }
-
-// ─────────────────────────────────────────────────────────────
-// TASK
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class Task {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid; // owner
-
-  @Index()
-  late String taskId; // UUID
-
-  late String title;
-  String? notes;
-
-  @Index()
-  late DateTime date; // the day this belongs to
-
-  bool isDone = false;
-  DateTime? completedAt;
-
-  @Enumerated(EnumType.name)
-  late TaskPriority priority;
-
-  @Enumerated(EnumType.name)
-  late TaskCategory category;
-
-  String? color; // hex override
-
-  // Recurrence
-  bool isRecurring = false;
-
-  @Enumerated(EnumType.name)
-  RecurrenceRule? recurrenceRule;
-
-  String? recurrenceParentId; // UUID of the root task
-  int? recurrencePosition;    // 0-based index in the series
-
-  // Auto-roll
-  bool autoRoll = true; // unfinished tasks roll forward
-  DateTime? rolledFromDate;
-
-  // ADHD helpers
-  int estimatedMinutes = 25; // Pomodoro default
-  bool hasFocus = false;     // pinned for today
-
-  late DateTime createdAt;
-  late DateTime updatedAt;
-}
-
-enum TaskPriority { low, medium, high, urgent }
-enum TaskCategory { personal, work, health, family, learning, finance, social, other }
-enum RecurrenceRule { daily, weekdays, weekly, biweekly, monthly, yearly }
-
-// ─────────────────────────────────────────────────────────────
-// HABIT
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class Habit {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index(unique: true)
-  late String habitId; // UUID
-
-  late String label;
-  late String icon; // emoji
-  late String color; // hex
-
-  @Enumerated(EnumType.name)
-  late HabitFrequency frequency;
-
-  // For weekly habits: which days (1=Mon … 7=Sun)
-  List<int> weekDays = const [1, 2, 3, 4, 5, 6, 7];
-
-  // Goal — e.g. quantity + unit
-  double? targetValue;
-  String? targetUnit; // cups, pages, minutes …
-
-  // Streak (cached for performance)
-  int currentStreak = 0;
-  int longestStreak = 0;
-
-  // Display order
-  int sortOrder = 0;
-
-  bool isArchived = false;
-
-  late DateTime createdAt;
-  late DateTime updatedAt;
-}
-
 enum HabitFrequency { daily, weekly, monthly }
+enum HabitCategory { health, fitness, mindfulness, learning, productivity, social, creative, other }
+enum TaskPriority { low, medium, high, critical }
+enum TaskStatus { pending, inProgress, completed, cancelled }
+enum GoalStatus { notStarted, inProgress, completed, abandoned }
+enum MoodLevel { veryBad, bad, neutral, good, veryGood }
+enum JournalMood { happy, sad, anxious, calm, excited, grateful, angry, neutral }
 
-// ─────────────────────────────────────────────────────────────
-// HABIT LOG  (one row per habit per day)
-// ─────────────────────────────────────────────────────────────
+class UserProfile {
+  String id; String? uid; String? name; String? email; String? avatarUrl; DateTime createdAt;
+  UserProfile({required this.id, this.uid, this.name, this.email, this.avatarUrl, DateTime? createdAt}) : createdAt = createdAt ?? DateTime.now();
+  Map<String, dynamic> toJson() => {'id': id, 'uid': uid, 'name': name, 'email': email, 'avatarUrl': avatarUrl, 'createdAt': createdAt.toIso8601String()};
+  factory UserProfile.fromJson(Map<String, dynamic> j) => UserProfile(id: j['id'] ?? '', uid: j['uid'], name: j['name'], email: j['email'], avatarUrl: j['avatarUrl'], createdAt: j['createdAt'] != null ? DateTime.parse(j['createdAt']) : DateTime.now());
+}
 
-@collection
+class Habit {
+  String id; String name; String? description; String? emoji; String? colorHex;
+  HabitFrequency frequency; HabitCategory category; int targetCount; bool isActive; DateTime createdAt; String? userId;
+  Habit({required this.id, required this.name, this.description, this.emoji, this.colorHex, this.frequency = HabitFrequency.daily, this.category = HabitCategory.other, this.targetCount = 1, this.isActive = true, DateTime? createdAt, this.userId}) : createdAt = createdAt ?? DateTime.now();
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'description': description, 'emoji': emoji, 'colorHex': colorHex, 'frequency': frequency.name, 'category': category.name, 'targetCount': targetCount, 'isActive': isActive, 'createdAt': createdAt.toIso8601String(), 'userId': userId};
+  factory Habit.fromJson(Map<String, dynamic> j) => Habit(id: j['id'] ?? '', name: j['name'] ?? '', description: j['description'], emoji: j['emoji'], colorHex: j['colorHex'], frequency: HabitFrequency.values.firstWhere((e) => e.name == j['frequency'], orElse: () => HabitFrequency.daily), category: HabitCategory.values.firstWhere((e) => e.name == j['category'], orElse: () => HabitCategory.other), targetCount: j['targetCount'] ?? 1, isActive: j['isActive'] ?? true, createdAt: j['createdAt'] != null ? DateTime.parse(j['createdAt']) : DateTime.now(), userId: j['userId']);
+}
+
 class HabitLog {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String habitId;
-
-  @Index()
-  late DateTime date; // midnight UTC of the logged day
-
-  bool completed = false;
-  double? value; // for quantitative habits (e.g. 7 cups)
-  String? note;
-
-  late DateTime createdAt;
+  String id; String habitId; DateTime date; int count; String? note;
+  HabitLog({required this.id, required this.habitId, required this.date, this.count = 1, this.note});
+  Map<String, dynamic> toJson() => {'id': id, 'habitId': habitId, 'date': date.toIso8601String(), 'count': count, 'note': note};
+  factory HabitLog.fromJson(Map<String, dynamic> j) => HabitLog(id: j['id'] ?? '', habitId: j['habitId'] ?? '', date: j['date'] != null ? DateTime.parse(j['date']) : DateTime.now(), count: j['count'] ?? 1, note: j['note']);
 }
 
-// ─────────────────────────────────────────────────────────────
-// GOAL
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class Goal {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index(unique: true)
-  late String goalId;
-
-  late String title;
-  String? description;
-  String? icon; // emoji
-
-  @Enumerated(EnumType.name)
-  late GoalType type;
-
-  @Enumerated(EnumType.name)
-  late GoalCategory category;
-
-  // Progress
-  double? targetValue;
-  double currentValue = 0;
-  String? unit; // '$', 'books', 'kg' …
-
-  // Dates
-  DateTime? startDate;
-  DateTime? deadline;
-
-  bool isCompleted = false;
-  DateTime? completedAt;
-
-  // Hierarchy
-  String? parentGoalId; // for quarterly → annual roll-up
-  int? year;
-  int? quarter;
-  int? month;
-
-  late DateTime createdAt;
-  late DateTime updatedAt;
+class Task {
+  String id; String title; String? description; TaskPriority priority; TaskStatus status; DateTime? dueDate; bool isCompleted; DateTime createdAt; String? userId;
+  Task({required this.id, required this.title, this.description, this.priority = TaskPriority.medium, this.status = TaskStatus.pending, this.dueDate, this.isCompleted = false, DateTime? createdAt, this.userId}) : createdAt = createdAt ?? DateTime.now();
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'description': description, 'priority': priority.name, 'status': status.name, 'dueDate': dueDate?.toIso8601String(), 'isCompleted': isCompleted, 'createdAt': createdAt.toIso8601String(), 'userId': userId};
+  factory Task.fromJson(Map<String, dynamic> j) => Task(id: j['id'] ?? '', title: j['title'] ?? '', description: j['description'], priority: TaskPriority.values.firstWhere((e) => e.name == j['priority'], orElse: () => TaskPriority.medium), status: TaskStatus.values.firstWhere((e) => e.name == j['status'], orElse: () => TaskStatus.pending), dueDate: j['dueDate'] != null ? DateTime.parse(j['dueDate']) : null, isCompleted: j['isCompleted'] ?? false, createdAt: j['createdAt'] != null ? DateTime.parse(j['createdAt']) : DateTime.now(), userId: j['userId']);
 }
 
-enum GoalType { annual, quarterly, monthly, weekly, oneTime }
-enum GoalCategory { health, finance, learning, career, relationship, personal, family, travel }
-
-// ─────────────────────────────────────────────────────────────
-// CALENDAR EVENT
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class CalendarEvent {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index(unique: true)
-  late String eventId;
-
-  late String title;
-  String? description;
-  String? location;
-
-  @Index()
-  late DateTime startAt;
-  late DateTime endAt;
-
-  bool isAllDay = false;
-
-  @Enumerated(EnumType.name)
-  late EventCategory category;
-
-  String? color; // hex override
-  String? icon;  // emoji
-
-  // Recurrence
-  bool isRecurring = false;
-
-  @Enumerated(EnumType.name)
-  RecurrenceRule? recurrenceRule;
-
-  String? recurrenceParentId;
-
-  // Family
-  List<String> participantUids = const [];
-
-  // Reminders (minutes before)
-  List<int> remindAtMinutes = const [15];
-
-  late DateTime createdAt;
-  late DateTime updatedAt;
-}
-
-enum EventCategory { personal, work, health, family, social, finance, learning, other }
-
-// ─────────────────────────────────────────────────────────────
-// MOOD LOG
-// ─────────────────────────────────────────────────────────────
-
-@collection
 class MoodLog {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index()
-  late DateTime date; // midnight UTC
-
-  /// 1 = Very low … 5 = Very high
-  late int score;
-
-  String? note;
-  List<String> tags = const []; // e.g. ['anxious', 'energetic']
-
-  late DateTime createdAt;
+  String id; MoodLevel mood; String? note; DateTime date; String? userId;
+  MoodLog({required this.id, required this.mood, this.note, required this.date, this.userId});
+  Map<String, dynamic> toJson() => {'id': id, 'mood': mood.name, 'note': note, 'date': date.toIso8601String(), 'userId': userId};
+  factory MoodLog.fromJson(Map<String, dynamic> j) => MoodLog(id: j['id'] ?? '', mood: MoodLevel.values.firstWhere((e) => e.name == j['mood'], orElse: () => MoodLevel.neutral), note: j['note'], date: j['date'] != null ? DateTime.parse(j['date']) : DateTime.now(), userId: j['userId']);
 }
 
-// ─────────────────────────────────────────────────────────────
-// JOURNAL ENTRY
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class JournalEntry {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index(unique: true)
-  late DateTime date; // one per day (midnight UTC)
-
-  String body = '';
-  String? gratitude;  // "Three things I'm grateful for"
-  String? intention;  // "My intention for today"
-  String? reflection; // "End of day reflection"
-
-  // Decoration
-  List<String> stickers = const []; // emoji codes
-  String? washiTapeColor; // hex
-  String? theme; // e.g. 'spring', 'birthday'
-
-  // Prompt used
-  String? promptUsed;
-
-  late DateTime createdAt;
-  late DateTime updatedAt;
-}
-
-// ─────────────────────────────────────────────────────────────
-// VISION BOARD ITEM
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class VisionBoardItem {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  late String itemId;
-  late String label;
-  String? emoji;
-  String? imagePath; // local path for offline; synced to Storage
-  String? imageUrl;  // remote URL
-
-  String color = '#FCE7F3';
-  int sortOrder = 0;
-
-  late DateTime createdAt;
-}
-
-// ─────────────────────────────────────────────────────────────
-// ACHIEVEMENT / BADGE
-// ─────────────────────────────────────────────────────────────
-
-@collection
-class Achievement {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index(unique: true)
-  late String achievementId; // e.g. 'streak_7', 'goal_first'
-
-  late String title;
-  late String description;
-  late String badge; // emoji
-
-  bool isEarned = false;
-  DateTime? earnedAt;
-
-  late DateTime createdAt;
-}
-
-// ─────────────────────────────────────────────────────────────
-// WATER LOG  (separate for quick access)
-// ─────────────────────────────────────────────────────────────
-
-@collection
 class WaterLog {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  @Index()
-  late DateTime date;
-
-  int cups = 0;
-  int targetCups = 8;
-
-  late DateTime updatedAt;
+  String id; int amountMl; DateTime date; String? userId;
+  WaterLog({required this.id, required this.amountMl, required this.date, this.userId});
+  Map<String, dynamic> toJson() => {'id': id, 'amountMl': amountMl, 'date': date.toIso8601String(), 'userId': userId};
+  factory WaterLog.fromJson(Map<String, dynamic> j) => WaterLog(id: j['id'] ?? '', amountMl: j['amountMl'] ?? 0, date: j['date'] != null ? DateTime.parse(j['date']) : DateTime.now(), userId: j['userId']);
 }
 
-// ─────────────────────────────────────────────────────────────
-// FAMILY MEMBER
-// ─────────────────────────────────────────────────────────────
+class Goal {
+  String id; String title; String? description; GoalStatus status; DateTime? targetDate; double progress; DateTime createdAt; String? userId;
+  Goal({required this.id, required this.title, this.description, this.status = GoalStatus.notStarted, this.targetDate, this.progress = 0.0, DateTime? createdAt, this.userId}) : createdAt = createdAt ?? DateTime.now();
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'description': description, 'status': status.name, 'targetDate': targetDate?.toIso8601String(), 'progress': progress, 'createdAt': createdAt.toIso8601String(), 'userId': userId};
+  factory Goal.fromJson(Map<String, dynamic> j) => Goal(id: j['id'] ?? '', title: j['title'] ?? '', description: j['description'], status: GoalStatus.values.firstWhere((e) => e.name == j['status'], orElse: () => GoalStatus.notStarted), targetDate: j['targetDate'] != null ? DateTime.parse(j['targetDate']) : null, progress: (j['progress'] ?? 0.0).toDouble(), createdAt: j['createdAt'] != null ? DateTime.parse(j['createdAt']) : DateTime.now(), userId: j['userId']);
+}
 
-@collection
+class JournalEntry {
+  String id; String content; JournalMood mood; List<String> tags; DateTime date; String? userId;
+  JournalEntry({required this.id, required this.content, this.mood = JournalMood.neutral, this.tags = const [], required this.date, this.userId});
+  Map<String, dynamic> toJson() => {'id': id, 'content': content, 'mood': mood.name, 'tags': tags, 'date': date.toIso8601String(), 'userId': userId};
+  factory JournalEntry.fromJson(Map<String, dynamic> j) => JournalEntry(id: j['id'] ?? '', content: j['content'] ?? '', mood: JournalMood.values.firstWhere((e) => e.name == j['mood'], orElse: () => JournalMood.neutral), tags: List<String>.from(j['tags'] ?? []), date: j['date'] != null ? DateTime.parse(j['date']) : DateTime.now(), userId: j['userId']);
+}
+
+class CalendarEvent {
+  String id; String title; String? description; DateTime startDate; DateTime? endDate; bool isAllDay; String? colorHex; String? userId;
+  CalendarEvent({required this.id, required this.title, this.description, required this.startDate, this.endDate, this.isAllDay = false, this.colorHex, this.userId});
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'description': description, 'startDate': startDate.toIso8601String(), 'endDate': endDate?.toIso8601String(), 'isAllDay': isAllDay, 'colorHex': colorHex, 'userId': userId};
+  factory CalendarEvent.fromJson(Map<String, dynamic> j) => CalendarEvent(id: j['id'] ?? '', title: j['title'] ?? '', description: j['description'], startDate: j['startDate'] != null ? DateTime.parse(j['startDate']) : DateTime.now(), endDate: j['endDate'] != null ? DateTime.parse(j['endDate']) : null, isAllDay: j['isAllDay'] ?? false, colorHex: j['colorHex'], userId: j['userId']);
+}
+
 class FamilyMember {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String ownerUid;
-
-  late String memberId;
-  late String name;
-  String? avatarEmoji;
-  String? avatarUrl;
-  String? email;
-  String color = '#FED7AA';
-
-  @Enumerated(EnumType.name)
-  late FamilyRole role;
-
-  bool hasAppAccess = false;
-  String? linkedUid; // if they also have an account
-
-  late DateTime createdAt;
+  String id; String name; String? avatarUrl; String? relationship; String? userId;
+  FamilyMember({required this.id, required this.name, this.avatarUrl, this.relationship, this.userId});
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'avatarUrl': avatarUrl, 'relationship': relationship, 'userId': userId};
+  factory FamilyMember.fromJson(Map<String, dynamic> j) => FamilyMember(id: j['id'] ?? '', name: j['name'] ?? '', avatarUrl: j['avatarUrl'], relationship: j['relationship'], userId: j['userId']);
 }
 
-enum FamilyRole { parent, child, partner, other }
-
-// ─────────────────────────────────────────────────────────────
-// BUDGET TRANSACTION
-// ─────────────────────────────────────────────────────────────
-
-@collection
 class BudgetTransaction {
-  Id id = Isar.autoIncrement;
-
-  @Index()
-  late String uid;
-
-  late String transactionId;
-  late String title;
-
-  @Index()
-  late DateTime date;
-
-  late double amount; // positive = income, negative = expense
-
-  @Enumerated(EnumType.name)
-  late BudgetCategory category;
-
-  @Enumerated(EnumType.name)
-  late TransactionType type;
-
-  String? notes;
-  bool isRecurring = false;
-
-  late DateTime createdAt;
+  String id; String title; double amount; bool isIncome; String? category; DateTime date; String? userId;
+  BudgetTransaction({required this.id, required this.title, required this.amount, this.isIncome = false, this.category, required this.date, this.userId});
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'amount': amount, 'isIncome': isIncome, 'category': category, 'date': date.toIso8601String(), 'userId': userId};
+  factory BudgetTransaction.fromJson(Map<String, dynamic> j) => BudgetTransaction(id: j['id'] ?? '', title: j['title'] ?? '', amount: (j['amount'] ?? 0.0).toDouble(), isIncome: j['isIncome'] ?? false, category: j['category'], date: j['date'] != null ? DateTime.parse(j['date']) : DateTime.now(), userId: j['userId']);
 }
 
-enum BudgetCategory { housing, food, transport, health, entertainment, savings, income, other }
-enum TransactionType { income, expense, transfer, saving }
+class VisionBoardItem {
+  String id; String? imageUrl; String? title; String? note; String? emoji; DateTime createdAt; String? userId;
+  VisionBoardItem({required this.id, this.imageUrl, this.title, this.note, this.emoji, DateTime? createdAt, this.userId}) : createdAt = createdAt ?? DateTime.now();
+  Map<String, dynamic> toJson() => {'id': id, 'imageUrl': imageUrl, 'title': title, 'note': note, 'emoji': emoji, 'createdAt': createdAt.toIso8601String(), 'userId': userId};
+  factory VisionBoardItem.fromJson(Map<String, dynamic> j) => VisionBoardItem(id: j['id'] ?? '', imageUrl: j['imageUrl'], title: j['title'], note: j['note'], emoji: j['emoji'], createdAt: j['createdAt'] != null ? DateTime.parse(j['createdAt']) : DateTime.now(), userId: j['userId']);
+}
+
+class Achievement {
+  String id; String title; String? description; String? emoji; DateTime unlockedAt; String? userId;
+  Achievement({required this.id, required this.title, this.description, this.emoji, DateTime? unlockedAt, this.userId}) : unlockedAt = unlockedAt ?? DateTime.now();
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'description': description, 'emoji': emoji, 'unlockedAt': unlockedAt.toIso8601String(), 'userId': userId};
+  factory Achievement.fromJson(Map<String, dynamic> j) => Achievement(id: j['id'] ?? '', title: j['title'] ?? '', description: j['description'], emoji: j['emoji'], unlockedAt: j['unlockedAt'] != null ? DateTime.parse(j['unlockedAt']) : DateTime.now(), userId: j['userId']);
+}
