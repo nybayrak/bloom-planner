@@ -1,625 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Bloom Planner">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#E8A598">
-  <title>🌸 Bloom Planner</title>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FFF5F3;overflow-x:hidden}
-    #root{max-width:430px;margin:0 auto;min-height:100vh}
-    input,textarea,select,button{font-family:inherit}
-    ::-webkit-scrollbar{display:none}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bloom Planner">
+<meta name="theme-color" content="#E8A598">
+<title>🌸 Bloom Planner</title>
+<style>
+:root{--pr:#E8A598;--pd:#C87D6A;--pl:#FFF0ED;--ac:#9B7EBD;--bg:#FFF5F3;--ca:#fff;--tx:#3D2B1F;--mu:#9B8578;--su:#82C09A;--da:#E88A8A;--bo:#F0DDD8}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx)}
+#app{max-width:430px;margin:0 auto;min-height:100vh}
+header{background:linear-gradient(135deg,var(--pr),var(--pd));padding:14px 16px;color:#fff}
+header h1{font-size:20px;font-weight:800}
+header p{font-size:12px;opacity:.85;margin-top:1px}
+#content{padding:14px 14px 86px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1.5px solid var(--bo);display:flex;z-index:100}
+.nb{flex:1;padding:10px 4px 8px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--mu);font-family:inherit}
+.nb.on{color:var(--pr)}
+.nb .ic{font-size:22px}
+.nb .lb{font-size:10px;font-weight:500}
+.nb.on .lb{font-weight:800}
+.dot{width:4px;height:4px;border-radius:50%;background:var(--pr)}
+.card{background:var(--ca);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 6px rgba(200,125,106,.10);border:1px solid var(--bo)}
+.ct{font-size:14px;font-weight:700;color:var(--pr);margin-bottom:10px}
+.btn{background:linear-gradient(135deg,var(--pr),var(--pd));color:#fff;border:none;border-radius:12px;padding:10px 18px;cursor:pointer;font-weight:700;font-size:14px;font-family:inherit}
+.bsm{background:linear-gradient(135deg,var(--pr),var(--pd));color:#fff;border:none;border-radius:10px;padding:7px 14px;cursor:pointer;font-weight:600;font-size:13px;font-family:inherit}
+.bo2{background:transparent;color:var(--pr);border:2px solid var(--pr);border-radius:12px;padding:8px 16px;cursor:pointer;font-weight:600;font-size:13px;font-family:inherit}
+.wf{width:100%}
+input,textarea,select{width:100%;border:1.5px solid var(--bo);border-radius:10px;padding:10px 12px;font-size:14px;outline:none;background:var(--bg);color:var(--tx);font-family:inherit;margin-bottom:10px}
+textarea{min-height:120px;resize:vertical}
+label{display:block;font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.pb{background:var(--bo);border-radius:999px;height:8px;overflow:hidden;margin-bottom:10px}
+.pf{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--pr),var(--ac));transition:width .4s}
+.pill{padding:6px 14px;border-radius:999px;border:none;cursor:pointer;font-weight:600;font-size:13px;font-family:inherit}
+.on2{background:var(--pr);color:#fff}
+.off{background:var(--bo);color:var(--mu)}
+#mo{display:none;position:fixed;inset:0;background:rgba(61,43,31,.45);z-index:200;align-items:flex-end;justify-content:center}
+#mo.show{display:flex}
+#mb{background:#fff;border-radius:24px 24px 0 0;padding:20px 20px 36px;width:100%;max-width:430px;max-height:88vh;overflow-y:auto}
+.mt{font-size:17px;font-weight:700;color:var(--pr);margin-bottom:16px}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cd{border:none;border-radius:10px;padding:6px 2px;cursor:pointer;background:transparent;color:var(--tx);font-size:13px;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:inherit}
+.cd.td{background:var(--pl);font-weight:700}
+.cd.sl{background:var(--pr);color:#fff}
+.cdot{width:5px;height:5px;border-radius:50%;background:var(--pr)}
+.cd.sl .cdot{background:rgba(255,255,255,.8)}
+.mg{display:flex;justify-content:space-between}
+.mb2{border:2px solid var(--bo);border-radius:14px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;margin:0 2px;background:transparent;font-family:inherit}
+.mb2.sl{background:var(--pl);border-color:var(--pr)}
+.mb2 .em{font-size:26px}
+.mb2 .lbx{font-size:10px;color:var(--mu);font-weight:600}
+.mb2.sl .lbx{color:var(--pr)}
+.hi{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.ht{width:46px;height:46px;border-radius:50%;border:2.5px solid var(--bo);background:#fff;font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:inherit}
+.ht.dn{border-color:var(--su);background:var(--su);color:#fff;font-size:18px}
+.tc{width:24px;height:24px;border-radius:50%;border:2px solid var(--bo);background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;margin-top:1px;font-family:inherit}
+.tc.dn{border-color:var(--su);background:var(--su)}
+.db{background:none;border:none;cursor:pointer;color:var(--mu);font-size:20px;padding:4px;font-family:inherit}
+.hr{border-bottom:1px solid var(--bo)}
+.cp{display:flex;gap:8px;margin-bottom:16px}
+.cs{width:30px;height:30px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.cs.sl{border-color:#333}
+.eg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.eb{width:42px;height:42px;border-radius:12px;border:2px solid var(--bo);background:#fff;font-size:22px;cursor:pointer;font-family:inherit}
+.eb.sl{border-color:var(--pr);background:var(--pl)}
+.pg2{display:flex;gap:8px;margin-bottom:10px}
+.pb2{flex:1;padding:8px 4px;border:2px solid var(--bo);border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:var(--tx);font-family:inherit}
+.pb2.sl{border-color:var(--pr);background:var(--pl)}
+.bs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.bc{text-align:center;padding:12px 6px}
+.gw{flex:1;background:var(--bo);border-radius:999px;height:10px;overflow:hidden}
+.gf{height:100%;background:linear-gradient(90deg,var(--pr),var(--ac));border-radius:999px;transition:width .4s}
+.mm{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;background:var(--ca);border:1px solid var(--bo);border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 6px rgba(200,125,106,.10);font-family:inherit}
+.mi{width:48px;height:48px;border-radius:14px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.r{display:flex;align-items:center}
+.sb{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.wb{background:var(--bo);border-radius:999px;height:10px;margin-bottom:10px;overflow:hidden}
+.wf2{height:100%;border-radius:999px;background:linear-gradient(90deg,#74b9ff,#0984e3);transition:width .4s}
+.ec{border-left-width:4px;border-left-style:solid;padding:12px 14px;margin-bottom:8px}
+.gr{background:linear-gradient(135deg,var(--pl),#F0EBF8);border:none!important;box-shadow:none!important}
+.mu2{color:var(--mu)}
+.sm{font-size:13px}
+.xs{font-size:11px}
+.tc2{text-align:center}
+.fb{font-weight:700}
+.p40{padding:40px 20px}
+</style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" data-presets="react">
-const{useState,useEffect}=React;
-const T={pr:'#E8A598',pd:'#C87D6A',pl:'#FFF0ED',ac:'#9B7EBD',al:'#F0EBF8',bg:'#FFF5F3',ca:'#FFFFFF',tx:'#3D2B1F',mu:'#9B8578',su:'#82C09A',da:'#E88A8A',wa:'#F5C842',bo:'#F0DDD8'};
-const db={
-  get(k){try{return JSON.parse(localStorage.getItem(k))||[];}catch{return[];}},
-  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
-};
-const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36);
-const tod=()=>new Date().toISOString().slice(0,10);
-const fmtD=(d)=>{try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}catch{return d;}};
-const fmtT=(t)=>{if(!t)return'';const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}:${m} ${hr>=12?'PM':'AM'}`;};
-const S={
-  app:{fontFamily:'inherit',backgroundColor:T.bg,minHeight:'100vh',maxWidth:'430px',margin:'0 auto',paddingBottom:'72px'},
-  hdr:{background:`linear-gradient(135deg,${T.pr},${T.pd})`,padding:'14px 16px',color:'white'},
-  crd:{background:T.ca,borderRadius:'16px',padding:'14px 16px',marginBottom:'10px',boxShadow:'0 1px 6px rgba(200,125,106,0.10)',border:`1px solid ${T.bo}`},
-  btn:{background:`linear-gradient(135deg,${T.pr},${T.pd})`,color:'white',border:'none',borderRadius:'12px',padding:'10px 18px',cursor:'pointer',fontWeight:'700',fontSize:'14px'},
-  bsm:{background:`linear-gradient(135deg,${T.pr},${T.pd})`,color:'white',border:'none',borderRadius:'10px',padding:'7px 14px',cursor:'pointer',fontWeight:'600',fontSize:'13px'},
-  bot:{background:'transparent',color:T.pr,border:`2px solid ${T.pr}`,borderRadius:'12px',padding:'8px 16px',cursor:'pointer',fontWeight:'600',fontSize:'13px'},
-  inp:{width:'100%',border:`1.5px solid ${T.bo}`,borderRadius:'10px',padding:'10px 12px',fontSize:'14px',outline:'none',boxSizing:'border-box',marginBottom:'10px',background:T.bg,color:T.tx,fontFamily:'inherit'},
-  lbl:{fontSize:'11px',fontWeight:'700',color:T.mu,textTransform:'uppercase',letterSpacing:'0.8px',display:'block',marginBottom:'5px'},
-  nav:{position:'fixed',bottom:0,left:'50%',transform:'translateX(-50%)',width:'100%',maxWidth:'430px',background:'white',borderTop:`1.5px solid ${T.bo}`,display:'flex',zIndex:100},
-  mod:{position:'fixed',inset:0,background:'rgba(61,43,31,0.45)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'},
-  mox:{background:'white',borderRadius:'24px 24px 0 0',padding:'20px 20px 36px',width:'100%',maxWidth:'430px',maxHeight:'88vh',overflowY:'auto'},
-  sec:{padding:'14px 14px 0'},
-  pil:(a)=>({padding:'6px 14px',borderRadius:'999px',border:'none',cursor:'pointer',fontWeight:'600',fontSize:'13px',background:a?T.pr:T.bo,color:a?'white':T.mu}),
-};
-
-const TABS=[{id:'home',ic:'🏠',lb:'Home'},{id:'calendar',ic:'📅',lb:'Calendar'},{id:'habits',ic:'✨',lb:'Habits'},{id:'tasks',ic:'✅',lb:'Tasks'},{id:'more',ic:'⋯',lb:'More'}];
-
-function HomeTab(){
-  const[mood,setMood]=useState(null);
-  const[water,setWater]=useState(0);
-  const[tasks,setTasks]=useState([]);
-  const[habits,setHabits]=useState([]);
-  const[logs,setLogs]=useState([]);
-  const today=tod();
-  useEffect(()=>{
-    setTasks(db.get('bp_tasks').filter(x=>!x.completed).slice(0,5));
-    setHabits(db.get('bp_habits').filter(x=>x.active));
-    setLogs(db.get('bp_hlogs'));
-    const tm=db.get('bp_moods').find(x=>x.date===today);if(tm)setMood(tm.level);
-    const tw=db.get('bp_water').find(x=>x.date===today);if(tw)setWater(tw.amount);
-  },[]);
-  const saveMood=(lv)=>{setMood(lv);const m=db.get('bp_moods');db.set('bp_moods',[...m.filter(x=>x.date!==today),{id:uid(),date:today,level:lv}]);};
-  const addWater=()=>{const n=Math.min(water+250,3000);setWater(n);const w=db.get('bp_water');db.set('bp_water',[...w.filter(x=>x.date!==today),{id:uid(),date:today,amount:n}]);};
-  const doneH=habits.filter(h=>logs.some(l=>l.habitId===h.id&&l.date===today));
-  const MOODS=[['😢','Rough'],['😕','Meh'],['😐','Okay'],['🙂','Good'],['😄','Great']];
-  const hr=new Date().getHours();
-  const gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
-  return(
-    <div style={S.sec}>
-      <div style={{...S.crd,background:`linear-gradient(135deg,${T.pl},${T.al})`,border:'none'}}>
-        <p style={{margin:0,color:T.mu,fontSize:'13px'}}>{new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</p>
-        <h2 style={{margin:'4px 0 0',color:T.tx,fontSize:'22px',fontWeight:'700'}}>{gr} 🌸</h2>
-      </div>
-      <div style={S.crd}>
-        <p style={{margin:'0 0 10px',fontWeight:'700',color:T.pr,fontSize:'14px'}}>😊 Today's Mood</p>
-        <div style={{display:'flex',justifyContent:'space-between'}}>
-          {MOODS.map(([em,lb],i)=>(
-            <button key={i} onClick={()=>saveMood(i)} style={{background:mood===i?T.pl:'transparent',border:`2px solid ${mood===i?T.pr:T.bo}`,borderRadius:'14px',padding:'8px 4px',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px',flex:1,margin:'0 2px'}}>
-              <span style={{fontSize:'26px'}}>{em}</span>
-              <span style={{fontSize:'10px',color:mood===i?T.pr:T.mu,fontWeight:'600'}}>{lb}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      <div style={S.crd}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
-          <p style={{margin:0,fontWeight:'700',color:T.pr,fontSize:'14px'}}>💧 Water Tracker</p>
-          <span style={{fontWeight:'700',color:T.tx,fontSize:'13px'}}>{water} / 2000 ml</span>
-        </div>
-        <div style={{background:T.bo,borderRadius:'999px',height:'10px',marginBottom:'10px',overflow:'hidden'}}>
-          <div style={{background:'linear-gradient(90deg,#74b9ff,#0984e3)',width:`${Math.min(water/20,100)}%`,height:'100%',borderRadius:'999px',transition:'width 0.4s'}}/>
-        </div>
-        <button onClick={addWater} style={{...S.btn,width:'100%'}}>+ Add 250 ml 💧</button>
-      </div>
-      <div style={S.crd}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
-          <p style={{margin:0,fontWeight:'700',color:T.pr,fontSize:'14px'}}>✨ Today's Habits</p>
-          <span style={{fontSize:'12px',color:T.mu}}>{doneH.length}/{habits.length}</span>
-        </div>
-        {habits.length===0?<p style={{color:T.mu,fontSize:'13px',margin:0}}>No habits yet — add some in the Habits tab!</p>:<>
-          <div style={{background:T.bo,borderRadius:'999px',height:'6px',marginBottom:'10px'}}>
-            <div style={{background:T.su,width:`${habits.length?doneH.length/habits.length*100:0}%`,height:'100%',borderRadius:'999px',transition:'width 0.4s'}}/>
-          </div>
-          {habits.slice(0,5).map(h=>{const done=logs.some(l=>l.habitId===h.id&&l.date===today);return(
-            <div key={h.id} style={{display:'flex',alignItems:'center',gap:'10px',padding:'6px 0',borderBottom:`1px solid ${T.bo}`}}>
-              <span style={{fontSize:'18px'}}>{h.emoji||'🌸'}</span>
-              <span style={{flex:1,fontSize:'14px',color:done?T.mu:T.tx,textDecoration:done?'line-through':'none'}}>{h.name}</span>
-              {done&&<span style={{color:T.su,fontSize:'16px'}}>✓</span>}
-            </div>
-          );})}
-        </>}
-      </div>
-      <div style={S.crd}>
-        <p style={{margin:'0 0 8px',fontWeight:'700',color:T.pr,fontSize:'14px'}}>✅ Upcoming Tasks</p>
-        {tasks.length===0?<p style={{color:T.mu,fontSize:'13px',margin:0}}>No tasks — add some in the Tasks tab!</p>
-        :tasks.map(t=>(
-          <div key={t.id} style={{display:'flex',alignItems:'center',gap:'8px',padding:'6px 0',borderBottom:`1px solid ${T.bo}`}}>
-            <span style={{fontSize:'14px'}}>{t.priority==='high'?'🔴':t.priority==='medium'?'🟡':'🟢'}</span>
-            <div style={{flex:1}}>
-              <p style={{margin:0,fontSize:'14px',color:T.tx}}>{t.title}</p>
-              {t.dueDate&&<p style={{margin:0,fontSize:'11px',color:T.mu}}>Due {fmtD(t.dueDate)}</p>}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+<div id="app">
+<header><h1>🌸 Bloom Planner</h1><p id="hd"></p></header>
+<div id="content"></div>
+<nav>
+<button class="nb" onclick="setTab('home')"><span class="ic">🏠</span><span class="lb">Home</span></button>
+<button class="nb" onclick="setTab('calendar')"><span class="ic">📅</span><span class="lb">Calendar</span></button>
+<button class="nb" onclick="setTab('habits')"><span class="ic">✨</span><span class="lb">Habits</span></button>
+<button class="nb" onclick="setTab('tasks')"><span class="ic">✅</span><span class="lb">Tasks</span></button>
+<button class="nb" onclick="setTab('more')"><span class="ic">⋯</span><span class="lb">More</span></button>
+</nav>
+<div id="mo" onclick="closeMo()"><div id="mb" onclick="event.stopPropagation()"><div id="mc"></div></div></div>
+</div>
+<script>
+var S={tab:'home',sel:ds(),cY:new Date().getFullYear(),cM:new Date().getMonth(),tf:'active',ms:'menu',mo:null,md:{},
+d:{habits:[],hlogs:[],tasks:[],events:[],moods:[],water:[],journal:[],budget:[],goals:[]}};
+function ds(){return new Date().toISOString().slice(0,10)}
+function uid(){return Math.random().toString(36).slice(2,9)+Date.now().toString(36)}
+function fd(d){try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}catch{return d}}
+function ft(t){if(!t)return'';var p=t.split(':'),h=parseInt(p[0]);return(h%12||12)+':'+p[1]+' '+(h>=12?'PM':'AM')}
+function xe(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function load(){Object.keys(S.d).forEach(function(k){try{var v=localStorage.getItem('bp_'+k);if(v)S.d[k]=JSON.parse(v)}catch{}})}
+function sv(k){try{localStorage.setItem('bp_'+k,JSON.stringify(S.d[k]))}catch{}}
+function setTab(t){S.tab=t;S.ms='menu';render()}
+function setSec(s){S.ms=s;render()}
+ 
+function render(){
+  document.getElementById('hd').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  var nbs=document.querySelectorAll('.nb'),tabs=['home','calendar','habits','tasks','more'];
+  nbs.forEach(function(b,i){
+    b.classList.toggle('on',S.tab===tabs[i]);
+    var d=b.querySelector('.dot');
+    if(S.tab===tabs[i]){if(!d)b.insertAdjacentHTML('beforeend','<div class="dot"></div>')}
+    else{if(d)d.remove()}
+  });
+  var h='';
+  if(S.tab==='home')h=rHome();
+  else if(S.tab==='calendar')h=rCal();
+  else if(S.tab==='habits')h=rHabits();
+  else if(S.tab==='tasks')h=rTasks();
+  else h=rMore();
+  document.getElementById('content').innerHTML=h;
 }
-
-function CalendarTab(){
-  const[events,setEvents]=useState([]);
-  const[cur,setCur]=useState(new Date());
-  const[sel,setSel]=useState(tod());
-  const[show,setShow]=useState(false);
-  const[form,setForm]=useState({title:'',description:'',time:'09:00',color:T.pr});
-  useEffect(()=>{setEvents(db.get('bp_events'));},[]);
-  const yr=cur.getFullYear(),mo=cur.getMonth();
-  const firstDow=new Date(yr,mo,1).getDay();
-  const dim=new Date(yr,mo+1,0).getDate();
-  const evOn=(ds)=>events.filter(e=>e.date===ds);
-  const selEvs=evOn(sel).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
-  const save=()=>{
-    if(!form.title.trim())return;
-    const e={id:uid(),date:sel,...form};
-    const upd=[...events,e];setEvents(upd);db.set('bp_events',upd);
-    setForm({title:'',description:'',time:'09:00',color:T.pr});setShow(false);
-  };
-  const del=(id)=>{const upd=events.filter(e=>e.id!==id);setEvents(upd);db.set('bp_events',upd);};
-  const COLS=[T.pr,'#82C09A','#74b9ff','#a29bfe','#fd79a8','#fdcb6e'];
-  const cells=[];
-  for(let i=0;i<firstDow;i++)cells.push(null);
-  for(let i=1;i<=dim;i++)cells.push(i);
-  return(
-    <div style={S.sec}>
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'12px'}}>
-        <button onClick={()=>setCur(new Date(yr,mo-1,1))} style={{...S.bot,padding:'7px 14px'}}>‹</button>
-        <h3 style={{margin:0,color:T.tx,fontSize:'17px',fontWeight:'700'}}>{cur.toLocaleString('default',{month:'long',year:'numeric'})}</h3>
-        <button onClick={()=>setCur(new Date(yr,mo+1,1))} style={{...S.bot,padding:'7px 14px'}}>›</button>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'2px',marginBottom:'2px'}}>
-        {['S','M','T','W','T','F','S'].map((d,i)=><div key={i} style={{textAlign:'center',fontSize:'11px',color:T.mu,fontWeight:'700',padding:'3px 0'}}>{d}</div>)}
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'3px',marginBottom:'14px'}}>
-        {cells.map((day,i)=>{
-          if(!day)return<div key={i}/>;
-          const ds=`${yr}-${String(mo+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-          const isT=ds===tod(),isS=ds===sel,hasE=evOn(ds).length>0;
-          return(
-            <button key={i} onClick={()=>setSel(ds)} style={{border:'none',borderRadius:'10px',padding:'6px 2px',cursor:'pointer',background:isS?T.pr:isT?T.pl:'transparent',color:isS?'white':T.tx,fontSize:'13px',fontWeight:isT?'700':'400',display:'flex',flexDirection:'column',alignItems:'center',gap:'3px'}}>
-              {day}
-              {hasE&&<div style={{width:'5px',height:'5px',borderRadius:'50%',background:isS?'rgba(255,255,255,0.8)':T.pr}}/>}
-            </button>
-          );
-        })}
-      </div>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'10px'}}>
-        <p style={{margin:0,fontWeight:'700',color:T.tx,fontSize:'15px'}}>{new Date(sel+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}</p>
-        <button onClick={()=>setShow(true)} style={S.bsm}>+ Add</button>
-      </div>
-      {selEvs.length===0
-        ?<div style={{...S.crd,textAlign:'center',padding:'28px 20px'}}><p style={{fontSize:'32px',margin:'0 0 6px'}}>📭</p><p style={{color:T.mu,margin:0,fontSize:'14px'}}>No events — tap <strong>+ Add</strong> to create one!</p></div>
-        :selEvs.map(e=>(
-          <div key={e.id} style={{...S.crd,borderLeft:`4px solid ${e.color||T.pr}`,padding:'12px 14px',marginBottom:'8px'}}>
-            <div style={{display:'flex',alignItems:'flex-start',gap:'10px'}}>
-              <div style={{flex:1}}>
-                <p style={{margin:'0 0 2px',fontWeight:'700',color:T.tx,fontSize:'15px'}}>{e.title}</p>
-                {e.time&&<p style={{margin:'0 0 2px',fontSize:'12px',color:T.mu}}>🕐 {fmtT(e.time)}</p>}
-                {e.description&&<p style={{margin:0,fontSize:'13px',color:T.mu}}>{e.description}</p>}
-              </div>
-              <button onClick={()=>del(e.id)} style={{background:'none',border:'none',cursor:'pointer',fontSize:'20px',color:T.mu}}>×</button>
-            </div>
-          </div>
-        ))}
-      {show&&(
-        <div style={S.mod} onClick={()=>setShow(false)}>
-          <div style={S.mox} onClick={e=>e.stopPropagation()}>
-            <p style={{margin:'0 0 16px',fontWeight:'700',color:T.pr,fontSize:'17px'}}>📅 Add Event</p>
-            <label style={S.lbl}>Title *</label>
-            <input style={S.inp} placeholder="Event name" value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/>
-            <label style={S.lbl}>Description</label>
-            <input style={S.inp} placeholder="Optional notes" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/>
-            <label style={S.lbl}>Time</label>
-            <input type="time" style={S.inp} value={form.time} onChange={e=>setForm({...form,time:e.target.value})}/>
-            <label style={S.lbl}>Colour</label>
-            <div style={{display:'flex',gap:'8px',marginBottom:'16px'}}>
-              {COLS.map(c=><button key={c} onClick={()=>setForm({...form,color:c})} style={{width:'30px',height:'30px',borderRadius:'50%',background:c,border:form.color===c?'3px solid #333':'3px solid transparent',cursor:'pointer'}}/>)}
-            </div>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>setShow(false)} style={{...S.bot,flex:1}}>Cancel</button>
-              <button onClick={save} style={{...S.btn,flex:1}}>Add Event</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+ 
+function rHome(){
+  var today=ds(),habits=S.d.habits.filter(function(h){return h.active}),logs=S.d.hlogs;
+  var tasks=S.d.tasks.filter(function(t){return!t.completed}).slice(0,5);
+  var tm=S.d.moods.find(function(m){return m.date===today});
+  var tw=S.d.water.find(function(w){return w.date===today});
+  var water=tw?tw.amount:0;
+  var doneH=habits.filter(function(h){return logs.some(function(l){return l.habitId===h.id&&l.date===today})});
+  var hr=new Date().getHours(),gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  var MOODS=[['😢','Rough'],['😕','Meh'],['😐','Okay'],['🙂','Good'],['😄','Great']];
+  var mh=MOODS.map(function(m,i){return'<button class="mb2 '+(tm&&tm.level===i?'sl':'')+'" onclick="saveMood('+i+')"><span class="em">'+m[0]+'</span><span class="lbx">'+m[1]+'</span></button>'}).join('');
+  var habH=habits.length===0?'<p class="mu2 sm">No habits yet — add some in the Habits tab!</p>':
+    '<div class="r" style="justify-content:space-between;font-size:13px;margin-bottom:6px"><span class="mu2">Today\'s progress</span><span>'+Math.round(habits.length?doneH.length/habits.length*100:0)+'%</span></div>'+
+    '<div class="pb"><div class="pf" style="width:'+(habits.length?doneH.length/habits.length*100:0)+'%"></div></div>'+
+    habits.slice(0,5).map(function(h){var dn=logs.some(function(l){return l.habitId===h.id&&l.date===today});
+      return'<div class="r hr" style="gap:10px;padding:6px 0"><span style="font-size:18px">'+(h.emoji||'🌸')+'</span><span style="flex:1;font-size:14px;color:'+(dn?'var(--mu)':'var(--tx)')+';text-decoration:'+(dn?'line-through':'none')+'">'+xe(h.name)+'</span>'+(dn?'<span style="color:var(--su)">✓</span>':'')+'</div>'}).join('');
+  var taskH=tasks.length===0?'<p class="mu2 sm">No tasks — add some in the Tasks tab!</p>':
+    tasks.map(function(t){return'<div class="r hr" style="gap:8px;padding:6px 0"><span style="font-size:14px">'+(t.priority==='high'?'🔴':t.priority==='medium'?'🟡':'🟢')+'</span><div style="flex:1"><p style="font-size:14px">'+xe(t.title)+'</p>'+(t.dueDate?'<p class="xs mu2">Due '+fd(t.dueDate)+'</p>':'')+'</div></div>'}).join('');
+  return'<div class="card gr"><p class="mu2 sm">'+new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+'</p><h2 style="font-size:22px;font-weight:700;margin-top:4px">'+gr+' 🌸</h2></div>'+
+    '<div class="card"><p class="ct">😊 Today\'s Mood</p><div class="mg">'+mh+'</div>'+(tm!==undefined?'<p class="tc2 sm mu2" style="margin-top:8px">Mood saved! '+MOODS[tm.level][0]+'</p>':'')+'</div>'+
+    '<div class="card"><div class="r" style="justify-content:space-between;margin-bottom:8px"><p class="ct" style="margin:0">💧 Water Tracker</p><span style="font-weight:700;font-size:13px">'+water+' / 2000 ml</span></div>'+
+    '<div class="wb"><div class="wf2" style="width:'+Math.min(water/20,100)+'%"></div></div>'+
+    '<button class="btn wf" onclick="addWater()">+ Add 250 ml 💧</button></div>'+
+    '<div class="card"><div class="r" style="justify-content:space-between;margin-bottom:8px"><p class="ct" style="margin:0">✨ Today\'s Habits</p><span class="xs mu2">'+doneH.length+'/'+habits.length+'</span></div>'+habH+'</div>'+
+    '<div class="card"><p class="ct">✅ Upcoming Tasks</p>'+taskH+'</div>';
 }
-
-function HabitsTab(){
-  const[habits,setHabits]=useState([]);
-  const[logs,setLogs]=useState([]);
-  const[show,setShow]=useState(false);
-  const[form,setForm]=useState({name:'',emoji:'🌸'});
-  const today=tod();
-  useEffect(()=>{setHabits(db.get('bp_habits'));setLogs(db.get('bp_hlogs'));},[]);
-  const isDone=(id)=>logs.some(l=>l.habitId===id&&l.date===today);
-  const toggle=(habit)=>{
-    const nl=isDone(habit.id)?logs.filter(l=>!(l.habitId===habit.id&&l.date===today)):[...logs,{id:uid(),habitId:habit.id,date:today}];
-    setLogs(nl);db.set('bp_hlogs',nl);
-  };
-  const streak=(id)=>{let s=0,d=new Date();while(true){const ds=d.toISOString().slice(0,10);if(logs.some(l=>l.habitId===id&&l.date===ds)){s++;d.setDate(d.getDate()-1);}else break;}return s;};
-  const add=()=>{
-    if(!form.name.trim())return;
-    const h={id:uid(),name:form.name,emoji:form.emoji,active:true,createdAt:today};
-    const upd=[...habits,h];setHabits(upd);db.set('bp_habits',upd);
-    setForm({name:'',emoji:'🌸'});setShow(false);
-  };
-  const del=(id)=>{const upd=habits.filter(h=>h.id!==id);setHabits(upd);db.set('bp_habits',upd);};
-  const EMOJIS=['🌸','💪','📚','🧘','💧','🏃','🎨','🎵','🍎','😴','🌿','✍️','🧠','🎯','🌟','🛁'];
-  const done=habits.filter(h=>isDone(h.id)).length;
-  return(
-    <div style={S.sec}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'4px'}}>
-        <div>
-          <h2 style={{margin:0,color:T.tx,fontSize:'20px',fontWeight:'700'}}>✨ Habits</h2>
-          <p style={{margin:'2px 0 0',color:T.mu,fontSize:'13px'}}>{done}/{habits.length} done today</p>
-        </div>
-        <button onClick={()=>setShow(true)} style={S.btn}>+ New</button>
-      </div>
-      {habits.length>0&&(
-        <div style={{...S.crd,marginTop:'10px'}}>
-          <div style={{display:'flex',justifyContent:'space-between',fontSize:'12px',color:T.mu,marginBottom:'6px'}}>
-            <span>Today's progress</span><span>{Math.round(habits.length?done/habits.length*100:0)}%</span>
-          </div>
-          <div style={{background:T.bo,borderRadius:'999px',height:'8px'}}>
-            <div style={{background:`linear-gradient(90deg,${T.pr},${T.ac})`,width:`${habits.length?done/habits.length*100:0}%`,height:'100%',borderRadius:'999px',transition:'width 0.4s'}}/>
-          </div>
-        </div>
-      )}
-      {habits.length===0
-        ?<div style={{...S.crd,textAlign:'center',padding:'40px 20px',marginTop:'10px'}}>
-          <p style={{fontSize:'48px',margin:'0 0 10px'}}>🌱</p>
-          <p style={{color:T.mu,margin:'0 0 16px'}}>Start building healthy habits!</p>
-          <button onClick={()=>setShow(true)} style={S.btn}>Add your first habit</button>
-        </div>
-        :habits.map(h=>{const dn=isDone(h.id),st=streak(h.id);return(
-          <div key={h.id} style={{...S.crd,display:'flex',alignItems:'center',gap:'12px',marginTop:'8px'}}>
-            <button onClick={()=>toggle(h)} style={{width:'46px',height:'46px',borderRadius:'50%',border:`2.5px solid ${dn?T.su:T.bo}`,background:dn?T.su:'white',fontSize:'22px',cursor:'pointer',flexShrink:0,color:'white',display:'flex',alignItems:'center',justifyContent:'center'}}>
-              {dn?<span style={{fontSize:'20px'}}>✓</span>:<span>{h.emoji}</span>}
-            </button>
-            <div style={{flex:1}}>
-              <p style={{margin:0,fontWeight:'600',color:dn?T.mu:T.tx,textDecoration:dn?'line-through':'none',fontSize:'15px'}}>{h.name}</p>
-              {st>0&&<p style={{margin:'2px 0 0',fontSize:'12px',color:T.pr}}>🔥 {st} day streak</p>}
-            </div>
-            <button onClick={()=>del(h.id)} style={{background:'none',border:'none',cursor:'pointer',color:T.mu,fontSize:'20px',padding:'4px'}}>×</button>
-          </div>
-        );})}
-      {show&&(
-        <div style={S.mod} onClick={()=>setShow(false)}>
-          <div style={S.mox} onClick={e=>e.stopPropagation()}>
-            <p style={{margin:'0 0 16px',fontWeight:'700',color:T.pr,fontSize:'17px'}}>✨ New Habit</p>
-            <label style={S.lbl}>Name *</label>
-            <input style={S.inp} placeholder="e.g. Morning meditation" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>
-            <label style={S.lbl}>Choose an emoji</label>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'8px',marginBottom:'16px'}}>
-              {EMOJIS.map(em=><button key={em} onClick={()=>setForm({...form,emoji:em})} style={{width:'42px',height:'42px',borderRadius:'12px',border:`2px solid ${form.emoji===em?T.pr:T.bo}`,background:form.emoji===em?T.pl:'white',fontSize:'22px',cursor:'pointer'}}>{em}</button>)}
-            </div>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>setShow(false)} style={{...S.bot,flex:1}}>Cancel</button>
-              <button onClick={add} style={{...S.btn,flex:1}}>Add Habit</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+ 
+function rCal(){
+  var yr=S.cY,mo=S.cM,fd2=new Date(yr,mo,1).getDay(),dim=new Date(yr,mo+1,0).getDate();
+  var mn=new Date(yr,mo,1).toLocaleString('default',{month:'long',year:'numeric'});
+  function evOn(d){return S.d.events.filter(function(e){return e.date===d})}
+  var selEvs=evOn(S.sel).sort(function(a,b){return(a.time||'').localeCompare(b.time||'')});
+  var cells=[];for(var i=0;i<fd2;i++)cells.push('');for(var i=1;i<=dim;i++)cells.push(i);
+  var calH='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px">'+
+    ['S','M','T','W','T','F','S'].map(function(d){return'<div class="tc2 xs mu2 fb" style="padding:3px 0">'+d+'</div>'}).join('')+'</div>'+
+    '<div class="cg">'+cells.map(function(day){
+      if(!day)return'<div></div>';
+      var d2=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+      var isT=d2===ds(),isS=d2===S.sel,hasE=evOn(d2).length>0;
+      return'<button class="cd '+(isS?'sl':isT?'td':'')+'" onclick="selDate(\''+d2+'\')">'+day+(hasE?'<div class="cdot"></div>':'')+'</button>';
+    }).join('')+'</div>';
+  var selLbl=new Date(S.sel+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  var evH=selEvs.length===0?'<div class="card tc2 p40"><p style="font-size:32px;margin-bottom:6px">📭</p><p class="mu2">No events — tap <strong>+ Add</strong> to create one!</p></div>':
+    selEvs.map(function(e){return'<div class="card ec" style="border-left-color:'+(e.color||'#E8A598')+'"><div class="r" style="justify-content:space-between"><div><p style="font-weight:700;font-size:15px">'+xe(e.title)+'</p>'+(e.time?'<p class="xs mu2">🕐 '+ft(e.time)+'</p>':'')+(e.description?'<p class="sm mu2">'+xe(e.description)+'</p>':'')+'</div><button class="db" onclick="delEvent(\''+e.id+'\')">×</button></div></div>'}).join('');
+  return'<div class="r" style="justify-content:space-between;margin-bottom:12px">'+
+    '<button class="bo2" style="padding:7px 14px" onclick="prevMo()">‹</button>'+
+    '<h3 style="font-size:17px;font-weight:700">'+mn+'</h3>'+
+    '<button class="bo2" style="padding:7px 14px" onclick="nextMo()">›</button></div>'+
+    '<div class="card" style="padding:12px">'+calH+'</div>'+
+    '<div class="r" style="justify-content:space-between;margin-bottom:10px"><p style="font-weight:700;font-size:15px">'+selLbl+'</p><button class="bsm" onclick="openMo(\'ev\')">+ Add</button></div>'+evH;
 }
-
-function TasksTab(){
-  const[tasks,setTasks]=useState([]);
-  const[filter,setFilter]=useState('active');
-  const[show,setShow]=useState(false);
-  const[form,setForm]=useState({title:'',description:'',priority:'medium',dueDate:''});
-  useEffect(()=>{setTasks(db.get('bp_tasks'));},[]);
-  const add=()=>{
-    if(!form.title.trim())return;
-    const t={id:uid(),...form,completed:false,createdAt:tod()};
-    const upd=[t,...tasks];setTasks(upd);db.set('bp_tasks',upd);
-    setForm({title:'',description:'',priority:'medium',dueDate:''});setShow(false);
-  };
-  const toggle=(id)=>{const upd=tasks.map(t=>t.id===id?{...t,completed:!t.completed}:t);setTasks(upd);db.set('bp_tasks',upd);};
-  const del=(id)=>{const upd=tasks.filter(t=>t.id!==id);setTasks(upd);db.set('bp_tasks',upd);};
-  const shown=tasks.filter(t=>filter==='active'?!t.completed:t.completed);
-  const PR={high:['🔴','High'],medium:['🟡','Medium'],low:['🟢','Low']};
-  return(
-    <div style={S.sec}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'10px'}}>
-        <h2 style={{margin:0,color:T.tx,fontSize:'20px',fontWeight:'700'}}>✅ Tasks</h2>
-        <button onClick={()=>setShow(true)} style={S.btn}>+ New</button>
-      </div>
-      <div style={{display:'flex',gap:'8px',marginBottom:'12px'}}>
-        <button onClick={()=>setFilter('active')} style={S.pil(filter==='active')}>Active ({tasks.filter(t=>!t.completed).length})</button>
-        <button onClick={()=>setFilter('done')} style={S.pil(filter==='done')}>Done ({tasks.filter(t=>t.completed).length})</button>
-      </div>
-      {shown.length===0
-        ?<div style={{...S.crd,textAlign:'center',padding:'36px'}}><p style={{fontSize:'40px',margin:'0 0 8px'}}>{filter==='active'?'🎉':'📋'}</p><p style={{color:T.mu,margin:0}}>{filter==='active'?'All caught up!':'No completed tasks yet'}</p></div>
-        :shown.map(t=>(
-          <div key={t.id} style={{...S.crd,marginBottom:'8px'}}>
-            <div style={{display:'flex',gap:'10px',alignItems:'flex-start'}}>
-              <button onClick={()=>toggle(t.id)} style={{width:'24px',height:'24px',borderRadius:'50%',border:`2px solid ${t.completed?T.su:T.bo}`,background:t.completed?T.su:'white',cursor:'pointer',flexShrink:0,color:'white',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',marginTop:'1px'}}>
-                {t.completed?'✓':''}
-              </button>
-              <div style={{flex:1}}>
-                <div style={{display:'flex',alignItems:'center',gap:'5px'}}>
-                  <span style={{fontSize:'13px'}}>{PR[t.priority][0]}</span>
-                  <span style={{fontWeight:'600',color:T.tx,textDecoration:t.completed?'line-through':'none',fontSize:'15px'}}>{t.title}</span>
-                </div>
-                {t.description&&<p style={{margin:'2px 0 0',fontSize:'12px',color:T.mu}}>{t.description}</p>}
-                {t.dueDate&&<p style={{margin:'2px 0 0',fontSize:'11px',color:T.pr}}>📅 {fmtD(t.dueDate)}</p>}
-              </div>
-              <button onClick={()=>del(t.id)} style={{background:'none',border:'none',cursor:'pointer',color:T.mu,fontSize:'20px'}}>×</button>
-            </div>
-          </div>
-        ))}
-      {show&&(
-        <div style={S.mod} onClick={()=>setShow(false)}>
-          <div style={S.mox} onClick={e=>e.stopPropagation()}>
-            <p style={{margin:'0 0 16px',fontWeight:'700',color:T.pr,fontSize:'17px'}}>✅ New Task</p>
-            <label style={S.lbl}>Title *</label>
-            <input style={S.inp} placeholder="What needs doing?" value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/>
-            <label style={S.lbl}>Description</label>
-            <input style={S.inp} placeholder="Optional details" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/>
-            <label style={S.lbl}>Priority</label>
-            <div style={{display:'flex',gap:'8px',marginBottom:'10px'}}>
-              {Object.entries(PR).map(([k,[ic,lb]])=>(
-                <button key={k} onClick={()=>setForm({...form,priority:k})} style={{flex:1,padding:'8px 4px',border:`2px solid ${form.priority===k?T.pr:T.bo}`,borderRadius:'10px',background:form.priority===k?T.pl:'white',cursor:'pointer',fontSize:'13px',fontWeight:'600',color:T.tx}}>
-                  {ic} {lb}
-                </button>
-              ))}
-            </div>
-            <label style={S.lbl}>Due Date</label>
-            <input type="date" style={S.inp} value={form.dueDate} onChange={e=>setForm({...form,dueDate:e.target.value})}/>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>setShow(false)} style={{...S.bot,flex:1}}>Cancel</button>
-              <button onClick={add} style={{...S.btn,flex:1}}>Add Task</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+ 
+function getStr(id){var s=0,d=new Date();while(true){var ds2=d.toISOString().slice(0,10);if(S.d.hlogs.some(function(l){return l.habitId===id&&l.date===ds2})){s++;d.setDate(d.getDate()-1)}else break}return s}
+ 
+function rHabits(){
+  var today=ds(),habits=S.d.habits;
+  var isDone=function(id){return S.d.hlogs.some(function(l){return l.habitId===id&&l.date===today})};
+  var done=habits.filter(function(h){return isDone(h.id)}).length;
+  var ph=habits.length>0?'<div class="card mt" style="margin-top:10px"><div class="r" style="justify-content:space-between;font-size:13px;margin-bottom:6px"><span class="mu2">Today\'s progress</span><span>'+Math.round(habits.length?done/habits.length*100:0)+'%</span></div><div class="pb"><div class="pf" style="width:'+(habits.length?done/habits.length*100:0)+'%"></div></div></div>':'';
+  var hh=habits.length===0?'<div class="card tc2 p40"><p style="font-size:48px;margin-bottom:10px">🌱</p><p class="mu2" style="margin-bottom:16px">Start building healthy habits!</p><button class="btn" onclick="openMo(\'habit\')">Add your first habit</button></div>':
+    habits.map(function(h){var dn=isDone(h.id),st=getStr(h.id);
+      return'<div class="card hi"><button class="ht '+(dn?'dn':'')+'" onclick="togHabit(\''+h.id+'\')">'+
+        (dn?'✓':h.emoji||'🌸')+'</button><div style="flex:1"><p style="font-weight:600;font-size:15px;color:'+(dn?'var(--mu)':'var(--tx)')+';text-decoration:'+(dn?'line-through':'none')+'">'+xe(h.name)+'</p>'+
+        (st>0?'<p style="font-size:12px;color:var(--pr)">🔥 '+st+' day streak</p>':'')+'</div><button class="db" onclick="delHabit(\''+h.id+'\')">×</button></div>'}).join('');
+  return'<div class="sb"><div><h2 style="font-size:20px;font-weight:700">✨ Habits</h2><p class="mu2 sm">'+done+'/'+habits.length+' done today</p></div><button class="btn" onclick="openMo(\'habit\')">+ New</button></div>'+ph+hh;
 }
-
-function JournalSection({onBack}){
-  const[entries,setEntries]=useState([]);
-  const[show,setShow]=useState(false);
-  const[form,setForm]=useState({content:'',mood:'🙂'});
-  const MOODS=['😄','🙂','😐','😕','😢','😤','😰','🥰','😴','🤔'];
-  useEffect(()=>{setEntries(db.get('bp_journal'));},[]);
-  const add=()=>{
-    if(!form.content.trim())return;
-    const e={id:uid(),date:tod(),...form};
-    const upd=[e,...entries];setEntries(upd);db.set('bp_journal',upd);
-    setForm({content:'',mood:'🙂'});setShow(false);
-  };
-  const del=(id)=>{const upd=entries.filter(e=>e.id!==id);setEntries(upd);db.set('bp_journal',upd);};
-  return(
-    <div style={S.sec}>
-      <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'10px'}}>
-        <button onClick={onBack} style={{...S.bot,padding:'7px 14px'}}>‹ Back</button>
-        <h2 style={{margin:0,color:T.tx,fontSize:'20px',fontWeight:'700',flex:1}}>📝 Journal</h2>
-        <button onClick={()=>setShow(true)} style={S.bsm}>+ Write</button>
-      </div>
-      {entries.length===0
-        ?<div style={{...S.crd,textAlign:'center',padding:'40px 20px'}}><p style={{fontSize:'48px',margin:'0 0 10px'}}>📖</p><p style={{color:T.mu,margin:0}}>Your journal is empty. Start writing!</p></div>
-        :entries.map(e=>(
-          <div key={e.id} style={{...S.crd,marginBottom:'10px'}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
-              <span style={{fontSize:'12px',color:T.mu,fontWeight:'600'}}>{fmtD(e.date)}</span>
-              <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-                <span style={{fontSize:'22px'}}>{e.mood}</span>
-                <button onClick={()=>del(e.id)} style={{background:'none',border:'none',cursor:'pointer',color:T.mu,fontSize:'18px'}}>×</button>
-              </div>
-            </div>
-            <p style={{margin:0,color:T.tx,fontSize:'14px',lineHeight:'1.6',whiteSpace:'pre-wrap'}}>{e.content}</p>
-          </div>
-        ))}
-      {show&&(
-        <div style={S.mod} onClick={()=>setShow(false)}>
-          <div style={S.mox} onClick={e=>e.stopPropagation()}>
-            <p style={{margin:'0 0 14px',fontWeight:'700',color:T.pr,fontSize:'17px'}}>📝 New Entry</p>
-            <label style={S.lbl}>Feeling</label>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginBottom:'12px'}}>
-              {MOODS.map(m=><button key={m} onClick={()=>setForm({...form,mood:m})} style={{fontSize:'24px',padding:'4px',border:form.mood===m?`2px solid ${T.pr}`:'2px solid transparent',borderRadius:'8px',background:'none',cursor:'pointer'}}>{m}</button>)}
-            </div>
-            <label style={S.lbl}>What's on your mind? *</label>
-            <textarea style={{...S.inp,minHeight:'130px',resize:'vertical'}} placeholder="Write your thoughts..." value={form.content} onChange={e=>setForm({...form,content:e.target.value})}/>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>setShow(false)} style={{...S.bot,flex:1}}>Cancel</button>
-              <button onClick={add} style={{...S.btn,flex:1}}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+ 
+function rTasks(){
+  var shown=S.d.tasks.filter(function(t){return S.tf==='active'?!t.completed:t.completed});
+  var act=S.d.tasks.filter(function(t){return!t.completed}).length,dn=S.d.tasks.filter(function(t){return t.completed}).length;
+  var PR={high:['🔴','High'],medium:['🟡','Medium'],low:['🟢','Low']};
+  var th=shown.length===0?'<div class="card tc2" style="padding:36px"><p style="font-size:40px;margin-bottom:8px">'+(S.tf==='active'?'🎉':'📋')+'</p><p class="mu2">'+(S.tf==='active'?'All caught up!':'No completed tasks yet')+'</p></div>':
+    shown.map(function(t){return'<div class="card" style="margin-bottom:8px"><div class="r" style="gap:10px"><button class="tc '+(t.completed?'dn':'')+'" onclick="togTask(\''+t.id+'\')">'+(t.completed?'✓':'')+'</button><div style="flex:1"><div class="r" style="gap:8px"><span style="font-size:13px">'+(PR[t.priority||'medium'][0])+'</span><span style="font-weight:600;font-size:15px;text-decoration:'+(t.completed?'line-through':'none')+'">'+xe(t.title)+'</span></div>'+(t.description?'<p class="xs mu2">'+xe(t.description)+'</p>':'')+(t.dueDate?'<p class="xs" style="color:var(--pr)">📅 '+fd(t.dueDate)+'</p>':'')+'</div><button class="db" onclick="delTask(\''+t.id+'\')">×</button></div></div>'}).join('');
+  return'<div class="sb"><h2 style="font-size:20px;font-weight:700">✅ Tasks</h2><button class="btn" onclick="openMo(\'task\')">+ New</button></div>'+
+    '<div class="r" style="gap:8px;margin-bottom:12px"><button class="pill '+(S.tf==='active'?'on2':'off')+'" onclick="setTF(\'active\')">Active ('+act+')</button><button class="pill '+(S.tf==='done'?'on2':'off')+'" onclick="setTF(\'done\')">Done ('+dn+')</button></div>'+th;
 }
-
-function BudgetSection({onBack}){
-  const[txs,setTxs]=useState([]);
-  const[show,setShow]=useState(false);
-  const[form,setForm]=useState({title:'',amount:'',isIncome:false,category:'Other'});
-  const CATS=['Food','Transport','Bills','Shopping','Health','Entertainment','Salary','Freelance','Other'];
-  useEffect(()=>{setTxs(db.get('bp_budget'));},[]);
-  const add=()=>{
-    if(!form.title.trim()||!form.amount)return;
-    const t={id:uid(),date:tod(),title:form.title,amount:parseFloat(form.amount),isIncome:form.isIncome,category:form.category};
-    const upd=[t,...txs];setTxs(upd);db.set('bp_budget',upd);
-    setForm({title:'',amount:'',isIncome:false,category:'Other'});setShow(false);
-  };
-  const del=(id)=>{const upd=txs.filter(t=>t.id!==id);setTxs(upd);db.set('bp_budget',upd);};
-  const income=txs.filter(t=>t.isIncome).reduce((s,t)=>s+t.amount,0);
-  const expense=txs.filter(t=>!t.isIncome).reduce((s,t)=>s+t.amount,0);
-  const balance=income-expense;
-  return(
-    <div style={S.sec}>
-      <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'10px'}}>
-        <button onClick={onBack} style={{...S.bot,padding:'7px 14px'}}>‹ Back</button>
-        <h2 style={{margin:0,color:T.tx,fontSize:'20px',fontWeight:'700',flex:1}}>💰 Budget</h2>
-        <button onClick={()=>setShow(true)} style={S.bsm}>+ Add</button>
-      </div>
-      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'8px',marginBottom:'10px'}}>
-        {[['Balance',balance,balance>=0?T.su:T.da],['Income',income,T.su],['Expenses',expense,T.da]].map(([lb,am,co])=>(
-          <div key={lb} style={{...S.crd,textAlign:'center',padding:'12px 6px'}}>
-            <p style={{margin:'0 0 4px',fontSize:'10px',color:T.mu,fontWeight:'700',textTransform:'uppercase'}}>{lb}</p>
-            <p style={{margin:0,fontWeight:'800',color:co,fontSize:'14px'}}>£{Math.abs(am).toFixed(2)}</p>
-          </div>
-        ))}
-      </div>
-      {txs.length===0
-        ?<div style={{...S.crd,textAlign:'center',padding:'40px'}}><p style={{fontSize:'40px',margin:'0 0 8px'}}>💳</p><p style={{color:T.mu,margin:0}}>No transactions yet</p></div>
-        :txs.map(t=>(
-          <div key={t.id} style={{...S.crd,display:'flex',alignItems:'center',gap:'10px',marginBottom:'6px'}}>
-            <span style={{fontSize:'22px'}}>{t.isIncome?'💚':'💸'}</span>
-            <div style={{flex:1}}>
-              <p style={{margin:0,fontWeight:'600',color:T.tx,fontSize:'14px'}}>{t.title}</p>
-              <p style={{margin:'1px 0 0',fontSize:'11px',color:T.mu}}>{t.category} · {fmtD(t.date)}</p>
-            </div>
-            <span style={{fontWeight:'800',color:t.isIncome?T.su:T.da,fontSize:'14px'}}>{t.isIncome?'+':'-'}£{t.amount.toFixed(2)}</span>
-            <button onClick={()=>del(t.id)} style={{background:'none',border:'none',cursor:'pointer',color:T.mu,fontSize:'18px'}}>×</button>
-          </div>
-        ))}
-      {show&&(
-        <div style={S.mod} onClick={()=>setShow(false)}>
-          <div style={S.mox} onClick={e=>e.stopPropagation()}>
-            <p style={{margin:'0 0 14px',fontWeight:'700',color:T.pr,fontSize:'17px'}}>💰 New Transaction</p>
-            <div style={{display:'flex',gap:'8px',marginBottom:'12px'}}>
-              <button onClick={()=>setForm({...form,isIncome:false})} style={{flex:1,...(!form.isIncome?S.btn:S.bot)}}>💸 Expense</button>
-              <button onClick={()=>setForm({...form,isIncome:true})} style={{flex:1,...(form.isIncome?S.btn:S.bot)}}>💚 Income</button>
-            </div>
-            <label style={S.lbl}>Description *</label>
-            <input style={S.inp} placeholder="e.g. Groceries" value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/>
-            <label style={S.lbl}>Amount (£) *</label>
-            <input type="number" style={S.inp} placeholder="0.00" value={form.amount} onChange={e=>setForm({...form,amount:e.target.value})}/>
-            <label style={S.lbl}>Category</label>
-            <select style={S.inp} value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>
-              {CATS.map(c=><option key={c}>{c}</option>)}
-            </select>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>setShow(false)} style={{...S.bot,flex:1}}>Cancel</button>
-              <button onClick={add} style={{...S.btn,flex:1}}>Add</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+ 
+function rMore(){
+  if(S.ms==='journal')return rJournal();
+  if(S.ms==='budget')return rBudget();
+  if(S.ms==='goals')return rGoals();
+  return'<h2 style="font-size:20px;font-weight:700;margin-bottom:14px">⋯ More</h2>'+
+    [{id:'journal',ic:'📝',ti:'Journal',de:'Daily reflections & thoughts'},{id:'budget',ic:'💰',ti:'Budget',de:'Track income & expenses'},{id:'goals',ic:'🎯',ti:'Goals',de:'Set & track your goals'}]
+    .map(function(x){return'<button class="mm" onclick="setSec(\''+x.id+'\')"><div class="mi">'+x.ic+'</div><div style="flex:1"><p style="font-weight:700;font-size:16px">'+x.ti+'</p><p class="sm mu2">'+x.de+'</p></div><span class="mu2" style="font-size:20px">›</span></button>'}).join('');
 }
-
-function GoalsSection({onBack}){
-  const[goals,setGoals]=useState([]);
-  const[show,setShow]=useState(false);
-  const[form,setForm]=useState({title:'',description:'',targetDate:'',emoji:'🎯'});
-  const EMOJIS=['🎯','💪','📚','🏃','✈️','🎨','💰','🌟','❤️','🏠','🎓','🧘','🌸','🏋️','🍎'];
-  useEffect(()=>{setGoals(db.get('bp_goals'));},[]);
-  const add=()=>{
-    if(!form.title.trim())return;
-    const g={id:uid(),...form,progress:0,createdAt:tod()};
-    const upd=[...goals,g];setGoals(upd);db.set('bp_goals',upd);
-    setForm({title:'',description:'',targetDate:'',emoji:'🎯'});setShow(false);
-  };
-  const updP=(id,delta)=>{const upd=goals.map(g=>g.id===id?{...g,progress:Math.min(100,Math.max(0,g.progress+delta))}:g);setGoals(upd);db.set('bp_goals',upd);};
-  const del=(id)=>{const upd=goals.filter(g=>g.id!==id);setGoals(upd);db.set('bp_goals',upd);};
-  return(
-    <div style={S.sec}>
-      <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'10px'}}>
-        <button onClick={onBack} style={{...S.bot,padding:'7px 14px'}}>‹ Back</button>
-        <h2 style={{margin:0,color:T.tx,fontSize:'20px',fontWeight:'700',flex:1}}>🎯 Goals</h2>
-        <button onClick={()=>setShow(true)} style={S.bsm}>+ New</button>
-      </div>
-      {goals.length===0
-        ?<div style={{...S.crd,textAlign:'center',padding:'40px 20px'}}><p style={{fontSize:'48px',margin:'0 0 10px'}}>🌟</p><p style={{color:T.mu,margin:'0 0 16px'}}>Set goals and start achieving!</p><button onClick={()=>setShow(true)} style={S.btn}>Add your first goal</button></div>
-        :goals.map(g=>(
-          <div key={g.id} style={{...S.crd,marginBottom:'10px'}}>
-            <div style={{display:'flex',alignItems:'flex-start',gap:'10px',marginBottom:'10px'}}>
-              <span style={{fontSize:'28px'}}>{g.emoji}</span>
-              <div style={{flex:1}}>
-                <p style={{margin:0,fontWeight:'700',color:T.tx,fontSize:'15px'}}>{g.title}</p>
-                {g.description&&<p style={{margin:'2px 0 0',fontSize:'13px',color:T.mu}}>{g.description}</p>}
-                {g.targetDate&&<p style={{margin:'2px 0 0',fontSize:'12px',color:T.pr}}>🗓️ Target: {fmtD(g.targetDate)}</p>}
-              </div>
-              <button onClick={()=>del(g.id)} style={{background:'none',border:'none',cursor:'pointer',color:T.mu,fontSize:'20px'}}>×</button>
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'10px'}}>
-              <div style={{flex:1,background:T.bo,borderRadius:'999px',height:'10px',overflow:'hidden'}}>
-                <div style={{width:`${g.progress}%`,background:`linear-gradient(90deg,${T.pr},${T.ac})`,height:'100%',borderRadius:'999px',transition:'width 0.4s'}}/>
-              </div>
-              <span style={{fontWeight:'800',color:T.tx,minWidth:'38px',fontSize:'14px'}}>{g.progress}%</span>
-            </div>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>updP(g.id,-10)} style={{...S.bot,flex:1,padding:'7px'}}>− 10%</button>
-              <button onClick={()=>updP(g.id,10)} style={{...S.btn,flex:1,padding:'7px'}}>+ 10%</button>
-            </div>
-          </div>
-        ))}
-      {show&&(
-        <div style={S.mod} onClick={()=>setShow(false)}>
-          <div style={S.mox} onClick={e=>e.stopPropagation()}>
-            <p style={{margin:'0 0 14px',fontWeight:'700',color:T.pr,fontSize:'17px'}}>🎯 New Goal</p>
-            <label style={S.lbl}>Emoji</label>
-            <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginBottom:'12px'}}>
-              {EMOJIS.map(em=><button key={em} onClick={()=>setForm({...form,emoji:em})} style={{width:'42px',height:'42px',borderRadius:'12px',border:`2px solid ${form.emoji===em?T.pr:T.bo}`,background:form.emoji===em?T.pl:'white',fontSize:'22px',cursor:'pointer'}}>{em}</button>)}
-            </div>
-            <label style={S.lbl}>Goal *</label>
-            <input style={S.inp} placeholder="What do you want to achieve?" value={form.title} onChange={e=>setForm({...form,title:e.target.value})}/>
-            <label style={S.lbl}>Why is this important?</label>
-            <input style={S.inp} placeholder="Your motivation..." value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/>
-            <label style={S.lbl}>Target Date</label>
-            <input type="date" style={S.inp} value={form.targetDate} onChange={e=>setForm({...form,targetDate:e.target.value})}/>
-            <div style={{display:'flex',gap:'8px'}}>
-              <button onClick={()=>setShow(false)} style={{...S.bot,flex:1}}>Cancel</button>
-              <button onClick={add} style={{...S.btn,flex:1}}>Add Goal</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+ 
+function rJournal(){
+  var eh=S.d.journal.length===0?'<div class="card tc2 p40"><p style="font-size:48px;margin-bottom:10px">📖</p><p class="mu2">Your journal is empty. Start writing!</p></div>':
+    S.d.journal.map(function(e){return'<div class="card" style="margin-bottom:10px"><div class="r" style="justify-content:space-between;margin-bottom:8px"><span class="xs mu2 fb">'+fd(e.date)+'</span><div class="r" style="gap:8px"><span style="font-size:22px">'+e.mood+'</span><button class="db" onclick="delJE(\''+e.id+'\')">×</button></div></div><p style="font-size:14px;line-height:1.6;white-space:pre-wrap">'+xe(e.content)+'</p></div>'}).join('');
+  return'<div class="bh"><button class="bo2" style="padding:7px 14px" onclick="setSec(\'menu\')">‹ Back</button><h2 style="font-size:20px;font-weight:700;flex:1">📝 Journal</h2><button class="bsm" onclick="openMo(\'journal\')">+ Write</button></div>'+eh;
 }
-
-function MoreTab(){
-  const[sec,setSec]=useState('menu');
-  if(sec==='journal')return<JournalSection onBack={()=>setSec('menu')}/>;
-  if(sec==='budget')return<BudgetSection onBack={()=>setSec('menu')}/>;
-  if(sec==='goals')return<GoalsSection onBack={()=>setSec('menu')}/>;
-  return(
-    <div style={S.sec}>
-      <h2 style={{color:T.tx,margin:'0 0 14px',fontSize:'20px',fontWeight:'700'}}>⋯ More</h2>
-      {[{id:'journal',ic:'📝',ti:'Journal',de:'Daily reflections & thoughts'},{id:'budget',ic:'💰',ti:'Budget',de:'Track income & expenses'},{id:'goals',ic:'🎯',ti:'Goals',de:'Set & track your goals'}].map(item=>(
-        <button key={item.id} onClick={()=>setSec(item.id)} style={{...S.crd,width:'100%',textAlign:'left',cursor:'pointer',display:'flex',alignItems:'center',gap:'14px',marginBottom:'10px',border:`1px solid ${T.bo}`}}>
-          <div style={{width:'48px',height:'48px',borderRadius:'14px',background:T.pl,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'26px',flexShrink:0}}>{item.ic}</div>
-          <div style={{flex:1}}>
-            <p style={{margin:0,fontWeight:'700',color:T.tx,fontSize:'16px'}}>{item.ti}</p>
-            <p style={{margin:'2px 0 0',color:T.mu,fontSize:'13px'}}>{item.de}</p>
-          </div>
-          <span style={{color:T.mu,fontSize:'20px'}}>›</span>
-        </button>
-      ))}
-    </div>
-  );
+ 
+function rBudget(){
+  var txs=S.d.budget,income=txs.filter(function(t){return t.isIncome}).reduce(function(s,t){return s+t.amount},0);
+  var expense=txs.filter(function(t){return!t.isIncome}).reduce(function(s,t){return s+t.amount},0),balance=income-expense;
+  var sh='<div class="bs">'+[['Balance',balance,balance>=0?'var(--su)':'var(--da)'],['Income',income,'var(--su)'],['Expenses',expense,'var(--da)']].map(function(x){
+    return'<div class="card bc"><div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;margin-bottom:4px">'+x[0]+'</div><div style="font-size:14px;font-weight:800;color:'+x[2]+'">£'+Math.abs(x[1]).toFixed(2)+'</div></div>'}).join('')+'</div>';
+  var th=txs.length===0?'<div class="card tc2" style="padding:40px"><p style="font-size:40px;margin-bottom:8px">💳</p><p class="mu2">No transactions yet</p></div>':
+    txs.map(function(t){return'<div class="card r" style="gap:10px;margin-bottom:6px"><span style="font-size:22px">'+(t.isIncome?'💚':'💸')+'</span><div style="flex:1"><p style="font-weight:600;font-size:14px">'+xe(t.title)+'</p><p class="xs mu2">'+t.category+' · '+fd(t.date)+'</p></div><span style="font-weight:800;font-size:14px;color:'+(t.isIncome?'var(--su)':'var(--da)')+'">'+(t.isIncome?'+':'-')+'£'+t.amount.toFixed(2)+'</span><button class="db" onclick="delTx(\''+t.id+'\')">×</button></div>'}).join('');
+  return'<div class="bh"><button class="bo2" style="padding:7px 14px" onclick="setSec(\'menu\')">‹ Back</button><h2 style="font-size:20px;font-weight:700;flex:1">💰 Budget</h2><button class="bsm" onclick="openMo(\'tx\')">+ Add</button></div>'+sh+th;
 }
-
-function App(){
-  const[tab,setTab]=useState('home');
-  const pages={home:<HomeTab/>,calendar:<CalendarTab/>,habits:<HabitsTab/>,tasks:<TasksTab/>,more:<MoreTab/>};
-  return(
-    <div style={S.app}>
-      <div style={S.hdr}>
-        <h1 style={{margin:0,fontSize:'20px',fontWeight:'800',letterSpacing:'0.3px'}}>🌸 Bloom Planner</h1>
-        <p style={{margin:'1px 0 0',fontSize:'12px',opacity:0.85}}>{new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
-      </div>
-      <div style={{paddingTop:'4px'}}>{pages[tab]}</div>
-      <nav style={S.nav}>
-        {TABS.map(t=>(
-          <button key={t.id} onClick={()=>setTab(t.id)} style={{flex:1,padding:'10px 4px 8px',border:'none',background:'none',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:'2px',color:tab===t.id?T.pr:T.mu}}>
-            <span style={{fontSize:'22px'}}>{t.ic}</span>
-            <span style={{fontSize:'10px',fontWeight:tab===t.id?'800':'500'}}>{t.lb}</span>
-            {tab===t.id&&<div style={{width:'4px',height:'4px',borderRadius:'50%',background:T.pr}}/>}
-          </button>
-        ))}
-      </nav>
-    </div>
-  );
+ 
+function rGoals(){
+  var gh=S.d.goals.length===0?'<div class="card tc2 p40"><p style="font-size:48px;margin-bottom:10px">🌟</p><p class="mu2" style="margin-bottom:16px">Set goals and start achieving!</p><button class="btn" onclick="openMo(\'goal\')">Add your first goal</button></div>':
+    S.d.goals.map(function(g){return'<div class="card" style="margin-bottom:10px"><div class="r" style="gap:10px;margin-bottom:10px"><span style="font-size:28px">'+g.emoji+'</span><div style="flex:1"><p style="font-weight:700;font-size:15px">'+xe(g.title)+'</p>'+(g.description?'<p class="sm mu2">'+xe(g.description)+'</p>':'')+(g.targetDate?'<p class="xs" style="color:var(--pr)">🗓️ Target: '+fd(g.targetDate)+'</p>':'')+'</div><button class="db" onclick="delGoal(\''+g.id+'\')">×</button></div>'+
+      '<div class="r" style="gap:10px;margin-bottom:10px"><div class="gw"><div class="gf" style="width:'+g.progress+'%"></div></div><span style="font-weight:800;font-size:14px;min-width:38px">'+g.progress+'%</span></div>'+
+      '<div class="r" style="gap:8px"><button class="bo2 wf" style="padding:7px" onclick="updGoal(\''+g.id+'\',-10)">− 10%</button><button class="btn wf" style="padding:7px" onclick="updGoal(\''+g.id+'\',10)">+ 10%</button></div></div>'}).join('');
+  return'<div class="bh"><button class="bo2" style="padding:7px 14px" onclick="setSec(\'menu\')">‹ Back</button><h2 style="font-size:20px;font-weight:700;flex:1">🎯 Goals</h2><button class="bsm" onclick="openMo(\'goal\')">+ New</button></div>'+gh;
 }
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-  </script>
+ 
+var COLS=['#E8A598','#82C09A','#74b9ff','#a29bfe','#fd79a8','#fdcb6e'];
+var HE=['🌸','💪','📚','🧘','💧','🏃','🎨','🎵','🍎','😴','🌿','✍️','🧠','🎯','🌟','🛁'];
+var GE=['🎯','💪','📚','🏃','✈️','🎨','💰','🌟','❤️','🏠','🎓','🧘','🌸','🏋️','🍎'];
+var JM=['😄','🙂','😐','😕','😢','😤','😰','🥰','😴','🤔'];
+var CATS=['Food','Transport','Bills','Shopping','Health','Entertainment','Salary','Freelance','Other'];
+var MD={};
+ 
+function openMo(t){
+  MD={};
+  if(t==='ev')MD={color:'#E8A598',time:'09:00'};
+  else if(t==='habit')MD={emoji:'🌸'};
+  else if(t==='task')MD={priority:'medium'};
+  else if(t==='journal')MD={mood:'🙂'};
+  else if(t==='tx')MD={isIncome:false,category:'Other'};
+  else if(t==='goal')MD={emoji:'🎯'};
+  S.mo=t;rMo();
+}
+ 
+function closeMo(){S.mo=null;document.getElementById('mo').classList.remove('show')}
+ 
+function saveFV(){['m-t','m-d','m-ti','m-du','m-am','m-co','m-ca'].forEach(function(id){var el=document.getElementById(id);if(el)MD['_'+id]=el.value})}
+ 
+function pickC(c){saveFV();MD.color=c;rMo()}
+function pickE(e){saveFV();MD.emoji=e;rMo()}
+function pickGE(e){saveFV();MD.emoji=e;rMo()}
+function pickP(p){saveFV();MD.priority=p;rMo()}
+function pickJM2(m){saveFV();MD.mood=m;rMo()}
+function pickTT(v){saveFV();MD.isIncome=v;rMo()}
+ 
+function rMo(){
+  if(!S.mo){document.getElementById('mo').classList.remove('show');return}
+  var h='';
+  if(S.mo==='ev'){
+    h='<p class="mt">📅 Add Event</p>'+
+      '<label>Title *</label><input id="m-t" placeholder="Event name" value="'+xe(MD._['m-t']||MD['_m-t']||'')+'">'+
+      '<label>Description</label><input id="m-d" placeholder="Optional notes" value="'+xe(MD['_m-d']||'')+'">'+
+      '<label>Time</label><input type="time" id="m-ti" value="'+(MD['_m-ti']||MD.time||'09:00')+'">'+
+      '<label>Colour</label><div class="cp">'+COLS.map(function(c){return'<div class="cs '+(MD.color===c?'sl':'')+'" style="background:'+c+'" onclick="pickC(\''+c+'\')"></div>'}).join('')+'</div>'+
+      '<div class="r" style="gap:8px"><button class="bo2" style="flex:1" onclick="closeMo()">Cancel</button><button class="btn" style="flex:1" onclick="saveEv()">Add Event</button></div>';
+  } else if(S.mo==='habit'){
+    h='<p class="mt">✨ New Habit</p><label>Name *</label><input id="m-t" placeholder="e.g. Morning meditation" value="'+xe(MD['_m-t']||'')+'">'+
+      '<label>Choose an emoji</label><div class="eg">'+HE.map(function(e){return'<button class="eb '+(MD.emoji===e?'sl':'')+'" onclick="pickE(\''+e+'\')">'+e+'</button>'}).join('')+'</div>'+
+      '<div class="r" style="gap:8px"><button class="bo2" style="flex:1" onclick="closeMo()">Cancel</button><button class="btn" style="flex:1" onclick="saveHabit()">Add Habit</button></div>';
+  } else if(S.mo==='task'){
+    h='<p class="mt">✅ New Task</p><label>Title *</label><input id="m-t" placeholder="What needs doing?" value="'+xe(MD['_m-t']||'')+'">'+
+      '<label>Description</label><input id="m-d" placeholder="Optional details" value="'+xe(MD['_m-d']||'')+'">'+
+      '<label>Priority</label><div class="pg2">'+[['low','🟢 Low'],['medium','🟡 Medium'],['high','🔴 High']].map(function(x){return'<button class="pb2 '+(MD.priority===x[0]?'sl':'')+'" onclick="pickP(\''+x[0]+'\')">'+x[1]+'</button>'}).join('')+'</div>'+
+      '<label>Due Date</label><input type="date" id="m-du" value="'+(MD['_m-du']||'')+'">'+
+      '<div class="r" style="gap:8px"><button class="bo2" style="flex:1" onclick="closeMo()">Cancel</button><button class="btn" style="flex:1" onclick="saveTask2()">Add Task</button></div>';
+  } else if(S.mo==='journal'){
+    h='<p class="mt">📝 New Entry</p><label>Feeling</label><div class="r" style="flex-wrap:wrap;gap:6px;margin-bottom:12px">'+
+      JM.map(function(m){return'<button style="font-size:24px;padding:4px;border:2px solid '+(MD.mood===m?'var(--pr)':'transparent')+';border-radius:8px;background:none;cursor:pointer;font-family:inherit" onclick="pickJM2(\''+m+'\')">'+m+'</button>'}).join('')+'</div>'+
+      '<label>What\'s on your mind? *</label><textarea id="m-co" placeholder="Write your thoughts...">'+(MD['_m-co']||'')+'</textarea>'+
+      '<div class="r" style="gap:8px"><button class="bo2" style="flex:1" onclick="closeMo()">Cancel</button><button class="btn" style="flex:1" onclick="saveJournal()">Save</button></div>';
+  } else if(S.mo==='tx'){
+    h='<p class="mt">💰 New Transaction</p><div class="r" style="gap:8px;margin-bottom:12px">'+
+      '<button class="'+(MD.isIncome?'bo2':'btn')+'" style="flex:1" onclick="pickTT(false)">💸 Expense</button>'+
+      '<button class="'+(MD.isIncome?'btn':'bo2')+'" style="flex:1" onclick="pickTT(true)">💚 Income</button></div>'+
+      '<label>Description *</label><input id="m-t" placeholder="e.g. Groceries" value="'+xe(MD['_m-t']||'')+'">'+
+      '<label>Amount (£) *</label><input type="number" id="m-am" placeholder="0.00" value="'+(MD['_m-am']||'')+'">'+
+      '<label>Category</label><select id="m-ca">'+CATS.map(function(c){return'<option'+(c===MD.category?' selected':'')+'>'+c+'</option>'}).join('')+'</select>'+
+      '<div class="r" style="gap:8px"><button class="bo2" style="flex:1" onclick="closeMo()">Cancel</button><button class="btn" style="flex:1" onclick="saveTx()">Add</button></div>';
+  } else if(S.mo==='goal'){
+    h='<p class="mt">🎯 New Goal</p><label>Emoji</label><div class="eg">'+GE.map(function(e){return'<button class="eb '+(MD.emoji===e?'sl':'')+'" onclick="pickGE(\''+e+'\')">'+e+'</button>'}).join('')+'</div>'+
+      '<label>Goal *</label><input id="m-t" placeholder="What do you want to achieve?" value="'+xe(MD['_m-t']||'')+'">'+
+      '<label>Why is this important?</label><input id="m-d" placeholder="Your motivation..." value="'+xe(MD['_m-d']||'')+'">'+
+      '<label>Target Date</label><input type="date" id="m-du" value="'+(MD['_m-du']||'')+'">'+
+      '<div class="r" style="gap:8px"><button class="bo2" style="flex:1" onclick="closeMo()">Cancel</button><button class="btn" style="flex:1" onclick="saveGoal()">Add Goal</button></div>';
+  }
+  document.getElementById('mc').innerHTML=h;
+  document.getElementById('mo').classList.add('show');
+}
+ 
+function g(id){var e=document.getElementById(id);return e?e.value.trim():''}
+ 
+function saveEv(){var t=g('m-t');if(!t)return;S.d.events.push({id:uid(),date:S.sel,title:t,description:g('m-d'),time:g('m-ti')||'09:00',color:MD.color||'#E8A598'});sv('events');closeMo();render()}
+function saveHabit(){var n=g('m-t');if(!n)return;S.d.habits.push({id:uid(),name:n,emoji:MD.emoji||'🌸',active:true,createdAt:ds()});sv('habits');closeMo();render()}
+function saveTask2(){var t=g('m-t');if(!t)return;S.d.tasks.unshift({id:uid(),title:t,description:g('m-d'),priority:MD.priority||'medium',dueDate:g('m-du'),completed:false,createdAt:ds()});sv('tasks');closeMo();render()}
+function saveJournal(){var c=g('m-co');if(!c)return;S.d.journal.unshift({id:uid(),date:ds(),content:c,mood:MD.mood||'🙂'});sv('journal');closeMo();render()}
+function saveTx(){var t=g('m-t'),a=parseFloat(document.getElementById('m-am').value);if(!t||!a)return;var cat=document.getElementById('m-ca');S.d.budget.unshift({id:uid(),date:ds(),title:t,amount:a,isIncome:MD.isIncome||false,category:cat?cat.value:'Other'});sv('budget');closeMo();render()}
+function saveGoal(){var t=g('m-t');if(!t)return;S.d.goals.push({id:uid(),title:t,description:g('m-d'),targetDate:g('m-du'),emoji:MD.emoji||'🎯',progress:0,createdAt:ds()});sv('goals');closeMo();render()}
+ 
+function saveMood(lv){var today=ds();S.d.moods=S.d.moods.filter(function(m){return m.date!==today});S.d.moods.push({id:uid(),date:today,level:lv});sv('moods');render()}
+function addWater(){var today=ds(),ex=S.d.water.find(function(w){return w.date===today}),am=Math.min((ex?ex.amount:0)+250,3000);S.d.water=S.d.water.filter(function(w){return w.date!==today});S.d.water.push({id:uid(),date:today,amount:am});sv('water');render()}
+function togHabit(id){var today=ds(),ex=S.d.hlogs.some(function(l){return l.habitId===id&&l.date===today});if(ex)S.d.hlogs=S.d.hlogs.filter(function(l){return!(l.habitId===id&&l.date===today)});else S.d.hlogs.push({id:uid(),habitId:id,date:today});sv('hlogs');render()}
+function delHabit(id){S.d.habits=S.d.habits.filter(function(h){return h.id!==id});sv('habits');render()}
+function togTask(id){var t=S.d.tasks.find(function(t){return t.id===id});if(t)t.completed=!t.completed;sv('tasks');render()}
+function delTask(id){S.d.tasks=S.d.tasks.filter(function(t){return t.id!==id});sv('tasks');render()}
+function setTF(f){S.tf=f;render()}
+function selDate(d){S.sel=d;render()}
+function prevMo(){S.cM--;if(S.cM<0){S.cM=11;S.cY--}render()}
+function nextMo(){S.cM++;if(S.cM>11){S.cM=0;S.cY++}render()}
+function delEvent(id){S.d.events=S.d.events.filter(function(e){return e.id!==id});sv('events');render()}
+function delJE(id){S.d.journal=S.d.journal.filter(function(e){return e.id!==id});sv('journal');render()}
+function delTx(id){S.d.budget=S.d.budget.filter(function(t){return t.id!==id});sv('budget');render()}
+function updGoal(id,d){var g=S.d.goals.find(function(g){return g.id===id});if(g)g.progress=Math.min(100,Math.max(0,g.progress+d));sv('goals');render()}
+function delGoal(id){S.d.goals=S.d.goals.filter(function(g){return g.id!==id});sv('goals');render()}
+ 
+load();render();
+</script>
 </body>
 </html>
