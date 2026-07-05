@@ -49,27 +49,3 @@ dev_dependencies:
   mocktail: ^1.0.4
 flutter:
   uses-material-design: true
-  assets:
-    - assets/images/
-    - assets/icons/
-    - assets/stickers/
-  fonts:
-    - family: PlayfairDisplay
-      fonts:
-        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
-        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/PlayfairDisplay-Italic.ttf
-          style: italic
-    - family: Caveat
-      fonts:
-        - asset: assets/fonts/Caveat-Regular.ttf
-        - asset: assets/fonts/Caveat-Bold.ttf
-          weight: 700
-    - family: DMSans
-      fonts:
-        - asset: assets/fonts/DMSans-Regular.ttf
-        - asset: assets/fonts/DMSans-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/DMSans-Bold.ttf
-          weight: 700
